@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMS Dashboard</title>
+    <title>Chesterton BMS Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -27,6 +27,34 @@
             border-radius: 9999px;
             font-weight: 600;
         }
+
+        .tab-button.active {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -34,7 +62,7 @@
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <header class="flex flex-col md:flex-row items-center justify-between mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-4 md:mb-0">Building Management System</h1>
+            <h1 class="text-3xl font-bold text-gray-800 mb-4 md:mb-0">Chesterton Building Management System</h1>
             <div class="flex items-center gap-4 w-full md:w-fit">
                 <!-- Search Bar -->
                 <div class="relative w-full">
@@ -101,84 +129,182 @@
             <div id="add-system-message" class="mt-4 hidden p-3 rounded-lg text-green-800 bg-green-100 font-medium">
                 System added successfully!
             </div>
+            <button id="logout-btn" class="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                Log Out
+            </button>
         </section>
 
-        <!-- Main Content -->
-        <main class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Tab Buttons -->
+        <div class="flex items-center justify-center mb-6 bg-white p-2 rounded-lg gap-2">
+            <button id="tab-dashboard-btn" class="tab-button active flex-1 py-2 px-4 rounded-lg text-center font-medium text-gray-800 transition-colors duration-200 hover:bg-gray-100 focus:outline-none">Dashboard</button>
+            <button id="tab-user-guide-btn" class="tab-button flex-1 py-2 px-4 rounded-lg text-center font-medium text-gray-800 transition-colors duration-200 hover:bg-gray-100 focus:outline-none">User Guide</button>
+            <button id="tab-what-is-what-btn" class="tab-button flex-1 py-2 px-4 rounded-lg text-center font-medium text-gray-800 transition-colors duration-200 hover:bg-gray-100 focus:outline-none">What is What</button>
+        </div>
 
-            <!-- Filters Section -->
-            <aside class="col-span-1 bg-white p-6 rounded-lg h-fit sticky top-8">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
-                <div class="space-y-4">
-                    <!-- Status Filter -->
-                    <div>
-                        <h3 class="font-medium text-gray-700 mb-2">Status</h3>
-                        <div class="space-y-2">
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="status" value="active" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">Active</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="status" value="alert" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">Alert</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="status" value="inactive" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">Inactive</span>
-                            </label>
+        <!-- Tab Content Containers -->
+        <div id="tab-dashboard-content">
+            <!-- Main Content -->
+            <main class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+                <!-- Filters Section -->
+                <aside class="col-span-1 bg-white p-6 rounded-lg h-fit sticky top-8">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
+                    <div class="space-y-4">
+                        <!-- Status Filter -->
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">Status</h3>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="status" value="active" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">Active</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="status" value="alert" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">Alert</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="status" value="inactive" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">Inactive</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">Location</h3>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="location" value="A-Block" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">A-Block</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="location" value="B-Block" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">B-Block</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="location" value="C-Block" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">C-Block</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Type Filter -->
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">Type</h3>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="type" value="water" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">Water Tank</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="type" value="fire" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">Fire Alarm</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="type" value="electric" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">Electric Meter</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" data-filter="type" value="lift" class="form-checkbox text-blue-600 rounded-md">
+                                    <span class="ml-2 text-gray-600">Lift System</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
+                </aside>
 
-                    <!-- Location Filter -->
-                    <div>
-                        <h3 class="font-medium text-gray-700 mb-2">Location</h3>
-                        <div class="space-y-2">
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="location" value="A-Block" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">A-Block</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="location" value="B-Block" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">B-Block</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="location" value="C-Block" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">C-Block</span>
-                            </label>
+                <!-- Dashboard Cards -->
+                <div id="dashboard-container" class="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards will be injected here by JavaScript -->
+                </div>
+            </main>
+        </div>
+
+        <!-- User Guide Tab Content -->
+        <div id="tab-user-guide-content" class="p-6 bg-white rounded-lg hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">User Guide</h2>
+            <p class="text-gray-700 mb-4">
+                Welcome to the Chesterton Building Management System! This dashboard gives you a live overview of key systems in the building. Here's a quick guide to help you get started:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li>
+                    **Search Bar:** Use the search bar at the top to quickly find systems by their name or location.
+                </li>
+                <li>
+                    **Filters:** On the left side, you can filter the displayed systems by their status (Active, Alert, Inactive), location, or type. You can select multiple options to refine your search.
+                </li>
+                <li>
+                    **System Cards:** Each card shows a system's name, location, current value, and its operational status with a color-coded badge.
+                </li>
+                <li>
+                    **Admin Panel:** Click the "Admin Panel" button at the top to reveal a form where you can add new IoT systems to the dashboard.
+                </li>
+            </ul>
+        </div>
+
+        <!-- What is What Tab Content -->
+        <div id="tab-what-is-what-content" class="p-6 bg-white rounded-lg hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">What is What: A Legend</h2>
+            <p class="text-gray-700 mb-4">
+                This section explains the different statuses, types, and icons you'll see on the dashboard.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Statuses -->
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-2">Statuses</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="badge bg-green-100 text-green-800">Active</span>
+                            <span class="text-gray-600">- The system is operating normally.</span>
                         </div>
-                    </div>
-
-                    <!-- Type Filter -->
-                    <div>
-                        <h3 class="font-medium text-gray-700 mb-2">Type</h3>
-                        <div class="space-y-2">
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="type" value="water" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">Water Tank</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="type" value="fire" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">Fire Alarm</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="type" value="electric" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">Electric Meter</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" data-filter="type" value="lift" class="form-checkbox text-blue-600 rounded-md">
-                                <span class="ml-2 text-gray-600">Lift System</span>
-                            </label>
+                        <div class="flex items-center gap-2">
+                            <span class="badge bg-red-100 text-red-800">Alert</span>
+                            <span class="text-gray-600">- The system requires immediate attention.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="badge bg-gray-100 text-gray-800">Inactive</span>
+                            <span class="text-gray-600">- The system is offline or under maintenance.</span>
                         </div>
                     </div>
                 </div>
-            </aside>
 
-            <!-- Dashboard Cards -->
-            <div id="dashboard-container" class="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Cards will be injected here by JavaScript -->
+                <!-- Types & Icons -->
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-2">System Types</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a2 2 0 0 1 0 2.83L12 16.51 6.34 10.84a2 2 0 0 1 0-2.83L12 2.69zM12 22v-3.5"/></svg>
+                             <span class="text-gray-600">Water Tank</span>
+                        </div>
+                         <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c-3.314 0-6-2.686-6-6 0-1.747.747-3.344 1.942-4.47l-1.942-1.942a1 1 0 0 1 1.414-1.414l1.942 1.942c1.126-1.195 2.723-1.942 4.47-1.942 3.314 0 6 2.686 6 6s-2.686 6-6 6z"/><path d="M12 9v-5a1 1 0 0 0-2 0v5"/><path d="M14 9v-5a1 1 0 0 0-2 0v5"/></svg>
+                            <span class="text-gray-600">Fire Alarm</span>
+                        </div>
+                         <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-yellow-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                            <span class="text-gray-600">Electric Meter</span>
+                        </div>
+                         <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10m-4-4l4 4 4-4"/><path d="M12 22v-10m-4 4l4-4 4 4"/></svg>
+                            <span class="text-gray-600">Lift System</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+        </div>
+
     </div>
+
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold mb-4">Enter Admin Password</h3>
+            <input type="password" id="admin-password-input" class="w-full p-2 border rounded mb-4" placeholder="Password">
+            <button id="submit-password-btn" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Submit</button>
+            <div id="password-error-message" class="text-red-500 mt-2 hidden">Incorrect password. Please try again.</div>
+        </div>
+    </div>
+
 
     <script>
         // Example data. In a real application, this would come from an API.
@@ -193,6 +319,9 @@
             { id: 8, name: 'Lift System - Lift 2', location: 'C-Block', type: 'lift', status: 'active', value: 'Operational', url: 'https://example.com/lift/2' },
             { id: 9, name: 'Electric Meter - Main', location: 'A-Block', type: 'electric', status: 'active', value: '3.5 MWh', url: 'https://example.com/electric/main' },
         ];
+
+        // Global state for admin login status
+        let isAdminLoggedIn = false;
 
         // Utility function to generate an icon based on system type
         function getIconSVG(type) {
@@ -241,7 +370,7 @@
         // Function to handle filtering and searching
         function updateDashboard() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const checkedFilters = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
+            const checkedFilters = Array.from(document.querySelectorAll('#tab-dashboard-content input[type="checkbox"]:checked'));
 
             const activeFilters = {
                 status: checkedFilters.filter(cb => cb.dataset.filter === 'status').map(cb => cb.value),
@@ -288,18 +417,82 @@
             }, 3000);
         }
 
+        // Function to switch between tabs
+        function showTab(tabId) {
+            // Hide all tab content
+            document.getElementById('tab-dashboard-content').classList.add('hidden');
+            document.getElementById('tab-user-guide-content').classList.add('hidden');
+            document.getElementById('tab-what-is-what-content').classList.add('hidden');
+
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+            // Show the selected tab content and activate its button
+            document.getElementById(tabId + '-content').classList.remove('hidden');
+            document.getElementById(tabId + '-btn').classList.add('active');
+        }
+
+        // Admin panel logic
+        const ADMIN_PASSWORD = 'password123'; // Hardcoded password for this example
+
+        function showAdminPanel() {
+            document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('toggle-admin-btn').textContent = 'Hide Admin Panel';
+        }
+
+        function hideAdminPanel() {
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('toggle-admin-btn').textContent = 'Admin Panel';
+            isAdminLoggedIn = false;
+        }
+
+        function toggleAdminPanel() {
+            if (isAdminLoggedIn) {
+                hideAdminPanel();
+            } else {
+                document.getElementById('password-modal').style.display = 'block';
+            }
+        }
+
+        function handlePasswordSubmit() {
+            const input = document.getElementById('admin-password-input').value;
+            const error = document.getElementById('password-error-message');
+            if (input === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                showAdminPanel();
+                document.getElementById('password-modal').style.display = 'none';
+                document.getElementById('admin-password-input').value = '';
+                error.classList.add('hidden');
+            } else {
+                error.classList.remove('hidden');
+            }
+        }
+
         // Event listeners
         document.getElementById('search-input').addEventListener('input', updateDashboard);
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        document.querySelectorAll('#tab-dashboard-content input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', updateDashboard);
         });
         document.getElementById('add-system-form').addEventListener('submit', addSystem);
         
-        // Toggle Admin Panel visibility
-        document.getElementById('toggle-admin-btn').addEventListener('click', () => {
-            const adminPanel = document.getElementById('admin-panel');
-            adminPanel.classList.toggle('hidden');
-        });
+        // Admin panel login/logout events
+        document.getElementById('toggle-admin-btn').addEventListener('click', toggleAdminPanel);
+        document.getElementById('submit-password-btn').addEventListener('click', handlePasswordSubmit);
+        document.getElementById('logout-btn').addEventListener('click', hideAdminPanel);
+
+        // Close modal if user clicks outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('password-modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        
+        // Tab button event listeners
+        document.getElementById('tab-dashboard-btn').addEventListener('click', () => showTab('tab-dashboard'));
+        document.getElementById('tab-user-guide-btn').addEventListener('click', () => showTab('tab-user-guide'));
+        document.getElementById('tab-what-is-what-btn').addEventListener('click', () => showTab('tab-what-is-what'));
+
 
         // Initial render
         window.onload = updateDashboard;
